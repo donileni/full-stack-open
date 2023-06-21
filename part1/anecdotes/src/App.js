@@ -11,16 +11,12 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-  
-  console.log("here")
 
   const initalPoints = Array(8).fill(0)
-  
   
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(initalPoints)
   const [mostVotes, setMostVotes] = useState(0)
-  console.log("Points: " + points)
 
   const handleSelected = () => {
     const max = anecdotes.length
@@ -46,33 +42,39 @@ const App = () => {
       }
     }
 
-    console.log("most votes after: " + mostVotes)
     let voteIndex = localPoints.indexOf(mostVotes)
-    console.log("index with most votes: " + voteIndex)
 
     setMostVotes(voteIndex)
     setPoints(localPoints)
-    console.log(points)
   }
 
   return (
     <div>
-      <h1>Anedote of the day</h1>
-      {anecdotes[selected]}
+      <Display text="Anecdote of the day" anecdote={anecdotes[selected]} />
       <div>
         <Button handleClick={() => handleVote()} text="vote" />
         <Button handleClick={() => handleSelected()} text="next anecdote" />
       </div>
-      <h1>Anecdote with most votes</h1>
-      {anecdotes[mostVotes]}
+      <Display text="Anecdote with most votes" anecdote={anecdotes[mostVotes]} />
     </div>
   )
 }
 
 const Button = (props) => (
     <button onClick={props.handleClick}>
-      {props.text}
+      { props.text }
     </button>
 )
+
+const Display = (props) =>  {
+  return (
+    <div>
+      <h1>{ props.text }</h1>
+      { props.anecdote }
+    </div>
+  )
+}
+
+
 
 export default App
