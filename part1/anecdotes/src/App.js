@@ -11,13 +11,16 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+  
+  console.log("here")
 
   const initalPoints = Array(8).fill(0)
   
+  
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(initalPoints)
-
-  console.log("points: " + points)
+  const [mostVotes, setMostVotes] = useState(0)
+  console.log("Points: " + points)
 
   const handleSelected = () => {
     const max = anecdotes.length
@@ -30,16 +33,38 @@ const App = () => {
     const index = anecdotes.indexOf(anecdotes[selected])
     
     copy[index] += 1
-    setPoints(copy)
+    handleMostVotes(copy)
+    
+  }
+
+  const handleMostVotes = (localPoints) => {
+    let mostVotes = localPoints[0]
+
+    for (let i = 0; i < localPoints.length; i++) {
+      if (mostVotes < localPoints[i]) {
+        mostVotes = localPoints[i]
+      }
     }
+
+    console.log("most votes after: " + mostVotes)
+    let voteIndex = localPoints.indexOf(mostVotes)
+    console.log("index with most votes: " + voteIndex)
+
+    setMostVotes(voteIndex)
+    setPoints(localPoints)
+    console.log(points)
+  }
 
   return (
     <div>
+      <h1>Anedote of the day</h1>
       {anecdotes[selected]}
       <div>
         <Button handleClick={() => handleVote()} text="vote" />
         <Button handleClick={() => handleSelected()} text="next anecdote" />
       </div>
+      <h1>Anecdote with most votes</h1>
+      {anecdotes[mostVotes]}
     </div>
   )
 }
