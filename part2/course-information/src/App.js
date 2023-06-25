@@ -11,6 +11,7 @@ const Course = ({ course }) => {
   )
 }
 
+
 const App = () => {
   const course = {
     id: 1,
@@ -30,11 +31,23 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
       }
     ]
   }
 
-  return <Course key={course.id} course={course} />
+  const total = course.parts.reduce((sum, order) => (sum + order.exercises), 0)
+
+  return (
+    <div>
+      <Course key={course.id} course={course} />
+      <b>total of exercises {total}</b>
+    </div>
+  )
 }
 
 export default App
