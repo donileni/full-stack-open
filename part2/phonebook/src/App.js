@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import Filter from "./components/filter.js"
 import PersonForm from "./components/person-form.js"
 import Persons from "./components/persons.js"
-import Person from "./components/person.js"
 import personService from "./services/persons.js"
 
 
@@ -32,8 +31,28 @@ const App = () => {
     }
 
     else if (persons.some(person => person.name === newName && person.number === newNumber)) {
-      window.alert(`${newName} is already added to phonebook, replace the old number with a new one?`)
-    } else {
+      window.alert(`${newName} is already added to phonebook`)
+    } 
+    
+    else if (persons.some(person => person.name === newName && person.number !== newNumber)) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        
+        const updatedContact = {
+          name: newName,
+          number: newNumber
+        }
+
+        const personNow = persons.filter(person => person.name === newName)
+
+        personService
+          .updateContact(personNow[0].id, updatedContact)
+          .then(updatedPerson => {
+            setPersons(persons.map((person => person.id !== personNow[0].id ? person: updatedPerson)))
+           })
+      }
+    }
+
+    else {
       const nameObject = {
         name: newName,
         number: newNumber,

@@ -11,8 +11,14 @@ const addToList = newObject => {
     return request.then(response => response.data)
 }
 
-const removeItem = id => {
-    return axios.delete(`${baseUrl}/${id}`)
+const updateContact = (id, newObject) => {
+    const request = axios.put(`${baseUrl}/${id}`, newObject)
+    return request.then(response => response.data)
 }
 
-export default {getAll, addToList, removeItem}
+const removeItem = id => {
+    return axios.delete(`${baseUrl}/${id}`)
+   
+}
+
+export default {getAll, addToList, removeItem, updateContact}
