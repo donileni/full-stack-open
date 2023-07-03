@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import Filter from "./components/filter.js"
 import PersonForm from "./components/person-form.js"
 import Persons from "./components/persons.js"
+import Person from "./components/person.js"
 import personService from "./services/persons.js"
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -12,10 +14,10 @@ const App = () => {
 
   useEffect(() => {
     personService
-    .getAll()
-    .then(allPersons => {
-      setPersons(allPersons)
-    })
+      .getAll()
+      .then(allPersons => {
+        setPersons(allPersons)
+      })
   }, [])
 
   const handleClick = (event) => {
@@ -29,9 +31,8 @@ const App = () => {
       window.alert("add a name")
     }
 
-    else if (persons.some(person => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`)
-      setNewName('')
+    else if (persons.some(person => person.name === newName && person.number === newNumber)) {
+      window.alert(`${newName} is already added to phonebook, replace the old number with a new one?`)
     } else {
       const nameObject = {
         name: newName,
@@ -56,8 +57,18 @@ const App = () => {
   const handleFilterChange = (event) => setFilter(event.target.value)
 
   const personsToShow = persons.filter(person => person.name.toUpperCase().includes(filter.toUpperCase()))
-  
 
+  const handleRemoveItem = (id) => {
+
+    const currentPerson = persons.filter(person => person.id === id)
+    
+    if (window.confirm(`Delete ${currentPerson[0].name}?`)) {
+      personService
+        .removeItem(id)
+        .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+  
   return (
     <div>
       <h2>Phonebook</h2>
@@ -68,7 +79,7 @@ const App = () => {
       handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}/>
       
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} removeItem={handleRemoveItem}/>
     </div>
   )
 }

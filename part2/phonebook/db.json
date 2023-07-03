@@ -1,39 +1,14 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
       "name": "David Olsson",
-      "number": "123",
-      "id": 5
-    },
-    {
-      "name": "Filip ",
       "number": "123123123",
-      "id": 6
+      "id": 9
     },
     {
-      "name": "David",
-      "number": "456456",
-      "id": 7
+      "name": "Filip Olsson",
+      "number": "1231231",
+      "id": 10
     }
   ]
 }
