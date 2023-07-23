@@ -52,7 +52,7 @@ const App = () => {
             setPersons(persons.map((person => person.id !== personNow[0].id ? person: updatedPerson)))
            })
 
-        setMessage(`${newName}'s number updated`)
+        setMessage(`The number of ${newName} was updated`)
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -97,6 +97,16 @@ const App = () => {
       personService
         .removeItem(id)
         .then(setPersons(persons.filter(person => person.id !== id)))
+        .catch(error => {
+          setMessage(`Infromation of ${currentPerson[0].name} has already been removed from server`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+            })
+      setMessage(`Deleted contact: ${currentPerson[0].name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
   
