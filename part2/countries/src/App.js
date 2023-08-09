@@ -18,11 +18,11 @@ function App() {
   const handleFilterChange = (event) => setFilter(event.target.value)
 
   const includedCountries = countries.filter(country => country.name.common.toUpperCase().includes(filter.toUpperCase()))
-
+   console.log(includedCountries)
   return(
     <div>
       <SearchModule handleFilterChange={handleFilterChange}/>
-      <Countries />
+      <Countries includedCountries={includedCountries}/>
     </div>
   )
 }
