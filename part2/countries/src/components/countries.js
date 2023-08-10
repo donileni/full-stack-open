@@ -1,3 +1,5 @@
+import Country from "./country"
+
 const Countries = (props) => {
 
     if (props.includedCountries.length > 10) {
@@ -9,18 +11,18 @@ const Countries = (props) => {
     if (props.includedCountries.length === 1) {
         return(
             <div>
-                <div>
-                    <h2>{props.includedCountries[0].name.common}</h2>
-                    <div>capital {props.includedCountries[0].capital} </div>
-                    <div>area {props.includedCountries[0].area} </div>
-                </div>
+                <Country key={props.includedCountries[0].id} name={props.includedCountries[0].name.common} 
+                capital={props.includedCountries[0].capital} area={props.includedCountries[0].area} 
+                languages={props.includedCountries[0].languages} flag={props.includedCountries[0].flags}/>
             </div>
         )
     }
     
     return (
         <div>
-            {props.includedCountries.map(country => country.name.common)}
+            {props.includedCountries.map(country => 
+                <Country key={country.id} name={country.name.common} number='multiple' capital={country.capital}
+                area={country.area} languages={country.languages} flag={country.flags}/>)}
         </div>
     )
 }
