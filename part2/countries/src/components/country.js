@@ -1,9 +1,6 @@
 const Country = (props) => {
 
-    console.log(props.languages)
-
     const allLanguages = Object.values(props.languages)
-    console.log(allLanguages)
 
     if (props.number === 'multiple') {
         return (
@@ -25,7 +22,7 @@ const Country = (props) => {
             <h3>languages:</h3>
 
             <ul>
-                {allLanguages.map(language => <li>{language}</li>)}
+                {allLanguages.map(language => <li key={language}>{language}</li>)}
             </ul>
             <img src={props.flag.png} alt=""></img>
 
