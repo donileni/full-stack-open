@@ -24,7 +24,7 @@ const Countries = (props) => {
         <div>
             {props.includedCountries.map(country => 
                 <Country key={country.name.common} name={country.name.common} number='multiple' capital={country.capital}
-                area={country.area} languages={country.languages} flag={country.flags}/>)}
+                area={country.area} languages={country.languages} flag={country.flags} handleClick={() => props.handleClick(country.name.common)}/>)}
         </div>
     )
 }

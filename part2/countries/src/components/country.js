@@ -7,6 +7,7 @@ const Country = (props) => {
             <div>
                 <div>
                     {props.name}
+                    <button onClick={props.handleClick}>show</button>
                 </div>
             </div>
     

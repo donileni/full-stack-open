@@ -15,14 +15,20 @@ function App() {
       })
   }, [])
 
-  const handleFilterChange = (event) => setFilter(event.target.value)
+  const handleFilterChange = (event) => (setFilter(event.target.value))
+  
 
-  const includedCountries = countries.filter(country => country.name.common.toUpperCase().includes(filter.toUpperCase()))
-  console.log(includedCountries)
+  let includedCountries = countries.filter(country => country.name.common.toUpperCase().includes(filter.toUpperCase()))
+
+  const handleClick = (buttonId) => {
+    const currentCountry = includedCountries.filter(country => country.name.common === buttonId)
+    setFilter(currentCountry[0].name.common)
+  }
+ 
   return(
     <div>
       <SearchModule handleFilterChange={handleFilterChange}/>
-      <Countries includedCountries={includedCountries}/>
+      <Countries includedCountries={includedCountries} handleClick={handleClick}/>
     </div>
   )
 }
