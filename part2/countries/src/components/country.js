@@ -13,15 +13,12 @@ const Country = (props) => {
             const apiCall = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${api_key}&units=metric`
             axios.get(apiCall)
             .then(response => {
-                console.log('response', response.data)
                 setTemp(response.data.current.temp)
                 setWind(response.data.current.wind_speed)
                 setSymbol(response.data.current.weather[0].icon)
             })
         }
       }, [lat, lng, number, symbol])
-
-      console.log(symbol)
 
     const allLanguages = Object.values(props.languages)
     
