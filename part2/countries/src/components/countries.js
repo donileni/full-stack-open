@@ -14,8 +14,8 @@ const Countries = (props) => {
 
         return(
             <div>
-                <Country key={country.name.common} name={country.name.common} capital={country.capital} area={country.area} 
-                languages={country.languages} flag={country.flags}/>
+                <Country key={country.name.common} name={country.name.common} number='singular' capital={country.capital} area={country.area} 
+                languages={country.languages} flag={country.flags} lat={country.capitalInfo.latlng[0]} lng={country.capitalInfo.latlng[1]}/>
             </div>
         )
     }
