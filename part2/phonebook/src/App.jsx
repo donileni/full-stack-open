@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import Filter from "./components/filter.js"
-import PersonForm from "./components/person-form.js"
-import Persons from "./components/persons.js"
+import Filter from "./components/filter.jsx"
+import PersonForm from "./components/person-form.jsx"
+import Persons from "./components/persons.jsx"
 import personService from "./services/persons.js"
-import Notification from './components/notification.js'
+import Notification from './components/notification.jsx'
 
 
 const App = () => {

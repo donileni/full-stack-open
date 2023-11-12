@@ -1,4 +1,4 @@
-import Person from "./person.js"
+import Person from "./person.jsx"
 
 const Persons = (props) => {
 
