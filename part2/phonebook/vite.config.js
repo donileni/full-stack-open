@@ -6,10 +6,12 @@ export default defineConfig({
     // depending on your application, base can also be "/"
     
     plugins: [react()],
-    server: {    
-        // this ensures that the browser opens upon server start
-        open: true,
-        // this sets a default port to 3000  
-        port: 3000, 
-    },
+    server: {
+        proxy: {
+          '/api': {
+            target: 'http://localhost:3001',
+            changeOrigin: true,
+          },
+        }
+      },
 })

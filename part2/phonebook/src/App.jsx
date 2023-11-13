@@ -4,6 +4,7 @@ import PersonForm from "./components/person-form.jsx"
 import Persons from "./components/persons.jsx"
 import personService from "./services/persons.js"
 import Notification from './components/notification.jsx'
+import ErrorNotification from './components/errorNotification.jsx'
 
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -69,13 +71,20 @@ const App = () => {
         .addToList(nameObject)
         .then(newPerson => {
           setPersons(persons.concat(newPerson))
+
+          setMessage(`Added ${newName}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+
+
         })
-
-      setMessage(`Added ${newName}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-
+        .catch(error => {
+          setErrorMessage(`${error.response.data.error}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
     }
     setNewName('')
     setNewNumber('')
@@ -98,11 +107,12 @@ const App = () => {
         .removeItem(id)
         .then(setPersons(persons.filter(person => person.id !== id)))
         .catch(error => {
-          setMessage(`Infromation of ${currentPerson[0].name} has already been removed from server`)
+          setErrorMessage(`Infromation of ${currentPerson[0].name} has already been removed from server`)
           setTimeout(() => {
-            setMessage(null)
+            setErrorMessage(null)
           }, 5000)
             })
+
       setMessage(`Deleted contact: ${currentPerson[0].name}`)
       setTimeout(() => {
         setMessage(null)
@@ -114,6 +124,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
+      <ErrorNotification errorMessage={errorMessage} />
       <Filter handleFilterChange={handleFilterChange} filter={filter} />
   
      
