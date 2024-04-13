@@ -1,3 +1,4 @@
+const { formToJSON } = require("axios")
 const blog = require("../models/blog")
 
 const dummy = (blogs) => {
@@ -27,6 +28,47 @@ const favouriteBlog = (blogs) => {
     return topBlog
 }
 
+const blogList = [
+    {
+        "author": "David",
+        "number": 12,
+    },
+    {
+        "author": "Anton",
+        "number": 23,
+    },
+    {
+        "author": "Filip",
+        "number": 123,
+    },
+    {
+        "author": "David",
+        "number": 123,
+    },
+    {
+        "author": "Filip",
+        "number": 123,
+    },
+]
+
+const mostBlogs = (blogs) => {
+
+    const authors = blogs.reduce((counter, blog) => {
+        counter[blog.author] = ++counter[blog.author] || 1; 
+        return counter; 
+    }, {})
+
+    const nameOfAuthorWithMostBlogs = Object.keys(authors).reduce((a, b) => authors[a] > authors[b] ? a : b, {})
+
+    const authorWithMostBlogs = {
+        author: nameOfAuthorWithMostBlogs,
+        blogs: authors[nameOfAuthorWithMostBlogs]
+    }
+
+    return authorWithMostBlogs; 
+}
+
+
   module.exports = {
-    dummy, totalLikes, favouriteBlog
+    dummy, totalLikes, favouriteBlog, mostBlogs
   }
