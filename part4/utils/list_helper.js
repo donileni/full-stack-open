@@ -45,33 +45,6 @@ const mostBlogs = (blogs) => {
     return authorWithMostBlogs; 
 }
 
-const listWithMultipleBlogs = [
-    {
-        author: 'Filip Kalle',
-        likes: 20,
-    },   
-    {
-        author: 'Edsger W. Dijkstra',
-        likes: 5,
-    },
-    {
-        author: 'Edsger W. Dijkstra',
-        likes: 20,
-    }, 
-    {
-        author: 'Filip',
-        likes: 20,
-    },
-    {
-        author: 'Edsger W. Dijkstra',
-        likes: 20,
-    }, 
-    {
-        author: 'anton',
-        likes: 20,
-    }, 
-]
-
 const mostLikes = (blogs) => {
     
     const authors = blogs.reduce((counter, blog) => {
