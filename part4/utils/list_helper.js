@@ -28,29 +28,6 @@ const favouriteBlog = (blogs) => {
     return topBlog
 }
 
-const blogList = [
-    {
-        "author": "David",
-        "number": 12,
-    },
-    {
-        "author": "Anton",
-        "number": 23,
-    },
-    {
-        "author": "Filip",
-        "number": 123,
-    },
-    {
-        "author": "David",
-        "number": 123,
-    },
-    {
-        "author": "Filip",
-        "number": 123,
-    },
-]
-
 const mostBlogs = (blogs) => {
 
     const authors = blogs.reduce((counter, blog) => {
@@ -68,7 +45,52 @@ const mostBlogs = (blogs) => {
     return authorWithMostBlogs; 
 }
 
+const listWithMultipleBlogs = [
+    {
+        author: 'Filip Kalle',
+        likes: 20,
+    },   
+    {
+        author: 'Edsger W. Dijkstra',
+        likes: 5,
+    },
+    {
+        author: 'Edsger W. Dijkstra',
+        likes: 20,
+    }, 
+    {
+        author: 'Filip',
+        likes: 20,
+    },
+    {
+        author: 'Edsger W. Dijkstra',
+        likes: 20,
+    }, 
+    {
+        author: 'anton',
+        likes: 20,
+    }, 
+]
+
+const mostLikes = (blogs) => {
+    
+    const authors = blogs.reduce((counter, blog) => {
+        counter[blog.author] = (counter[blog.author] || 0) + blog.likes
+        return counter;
+    }, {})
+
+    const nameOfAuthorWithMostLikes = Object.keys(authors).reduce((a, b) => authors[a] > authors[b] ? a : b, {})
+
+    const authorWithMostLikes = {
+        author: nameOfAuthorWithMostLikes,
+        likes: authors[nameOfAuthorWithMostLikes]
+    } 
+
+    return(authorWithMostLikes)
+
+}
+
 
   module.exports = {
-    dummy, totalLikes, favouriteBlog, mostBlogs
+    dummy, totalLikes, favouriteBlog, mostBlogs, mostLikes
   }
