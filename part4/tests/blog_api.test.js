@@ -32,4 +32,14 @@ describe("blog api", () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length);
   });
 
+  test("blog got id parameter", async () => {
+    const response = await api.get("/api/blogs")
+
+    const blogs = response.body.map(blog => blog)
+
+    blogs.forEach(blog => {
+      assert(blog.id)
+    })
+  });
+
 });
