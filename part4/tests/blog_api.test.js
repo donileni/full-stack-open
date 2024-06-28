@@ -42,4 +42,26 @@ describe("blog api", () => {
     })
   });
 
+  test("a valid blog can be addded", async () => {
+    const newBlog = {
+      "title": "Test blog x",
+      "author": "test author", 
+      "url": "www.test-url.com",
+      "likes": 100
+    }
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    
+    const titles = blogsAtEnd.map(blog => blog.title)
+    assert(titles.includes("Test blog x"))
+
+  })
+
 });
