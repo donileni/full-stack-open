@@ -5,10 +5,11 @@ const supertest = require("supertest");
 const helper = require("./test_helper")
 const app = require("../app");
 const assert = require("node:assert");
+const blog = require("../models/blog");
 
 const api = supertest(app);
 
-describe("blog api", () => {
+describe("blog api", async () => {
   beforeEach(async () => {
     await Blog.deleteMany({});
 
@@ -42,7 +43,7 @@ describe("blog api", () => {
     })
   });
 
-  test("a valid blog can be addded", async () => {
+  test("a valid blog can be added", async () => {
     const newBlog = {
       "title": "Test blog x",
       "author": "test author", 
@@ -62,6 +63,23 @@ describe("blog api", () => {
     const titles = blogsAtEnd.map(blog => blog.title)
     assert(titles.includes("Test blog x"))
 
+  })
+
+  test("note without likes equals zero", async () => {
+    const newBlog = {
+      "title": "Test blog witout likes",
+      "author": "test author", 
+      "url": "www.test-url.com",
+    }
+
+    await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, 0)
   })
 
 });
