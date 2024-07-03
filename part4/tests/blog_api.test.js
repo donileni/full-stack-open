@@ -82,4 +82,28 @@ describe("blog api", async () => {
     assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, 0)
   })
 
+  test("blog without title fails", async () => {
+    const newBlog = {
+      "author": "test author", 
+      "url": "www.test-url.com",
+      "likes": 100
+    }
+    await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(400)
+  })
+
+  test("blog without url fails", async () => {
+    const newBlog = {
+      "title": "blablbla",
+      "author": "test author", 
+      "likes": 100
+    }
+    await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(400)
+  })
+
 });
