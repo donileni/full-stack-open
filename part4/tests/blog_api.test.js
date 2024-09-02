@@ -127,6 +127,30 @@ describe("blog api", () => {
   
     })
   })
+
+  describe("updating blogs", () => {
+    test("succeds with status code 204 if valid id", async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+
+      const updatedBlog = {
+        "title": "Go To Statement Considered Harmful",
+        "author": "Edsger W. Dijkstra", 
+        "url": "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
+        "likes": 20000
+      }
+
+      await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      assert.notStrictEqual(blogsAtEnd[0].likes, helper.initialBlogs[0].likes)
+    })
+  })
+
 })
 
 after(async () => {
