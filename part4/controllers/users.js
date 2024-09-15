@@ -1,28 +1,40 @@
-const bcrypt = require('bcrypt')
-const usersRouter = require('express').Router()
-const User = require('../models/user')
+const bcrypt = require("bcrypt");
+const usersRouter = require("express").Router();
+const User = require("../models/user");
 
-usersRouter.post('/', async (request, response) => {
-    const { username, name, password } = request.body
+usersRouter.post("/", async (request, response) => {
 
-    const saltRounds = 10
-    const passwordHash = await bcrypt.hash(password, saltRounds)
+  const body = request.body
 
-    const user = new User({
-        username,
-        name,
-        passwordHash,
-    })
+  if (!body.password) {
+    return response.status(400).json({ error: "password must exist" });
+  } else if (body.password.length < 3) {
+    return response
+      .status(400)
+      .json({ error: "password must be longer than three characters" });
+  }
 
-    const savedUser = await user.save()
+  const username = body.username
+  const name = body.name
+  const password = body.password
 
-    response.status(201).json(savedUser)
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
 
-})
+  const user = new User({
+    username,
+    name,
+    passwordHash,
+  });
 
-usersRouter.get('/', async (request, response) => {
-    const users = await User.find({})
-    response.json(users)
-})
+  const savedUser = await user.save();
 
-module.exports = usersRouter
+  response.status(201).json(savedUser);
+});
+
+usersRouter.get("/", async (request, response) => {
+  const users = await User.find({});
+  response.json(users);
+});
+
+module.exports = usersRouter;
