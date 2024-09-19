@@ -8,6 +8,7 @@ const assert = require("node:assert");
 const blog = require("../models/blog");
 const bcrypt = require("bcrypt")
 const User = require("../models/user")
+const jwt = require('jsonwebtoken')
 
 const api = supertest(app);
 
@@ -39,7 +40,27 @@ describe("blog api", () => {
   })
 
   describe("adding a new blog", () => {
+
+    beforeEach(async () => {
+      await User.deleteMany()
+  
+      const passwordHash = await bcrypt.hash('sekret', 10)
+      const user = new User({ username: 'root', passwordHash })
+  
+      await user.save()
+  
+    })
+    
     test("a valid blog can be added", async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      const token = jwt.sign(userForToken, process.env.SECRET)
+
       const newBlog = {
         "title": "Test blog x",
         "author": "test author", 
@@ -49,6 +70,7 @@ describe("blog api", () => {
   
       await api
         .post("/api/blogs")
+        .set({ Authorization: token })
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -62,6 +84,16 @@ describe("blog api", () => {
     })
   
     test("note without likes equals zero", async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      const token = jwt.sign(userForToken, process.env.SECRET)
+
+
       const newBlog = {
         "title": "Test blog witout likes",
         "author": "test author", 
@@ -70,6 +102,7 @@ describe("blog api", () => {
   
       await api
       .post("/api/blogs")
+      .set({ Authorization: token })
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -79,6 +112,16 @@ describe("blog api", () => {
     })
   
     test("blog without title fails", async () => {
+
+      const user = await User.findOne({ username: 'root' })
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      const token = jwt.sign(userForToken, process.env.SECRET)
+
       const newBlog = {
         "author": "test author", 
         "url": "www.test-url.com",
@@ -86,6 +129,7 @@ describe("blog api", () => {
       }
       await api
       .post("/api/blogs")
+      .set({ Authorization: token })
       .send(newBlog)
       .expect(400)
 
@@ -96,6 +140,16 @@ describe("blog api", () => {
     })
   
     test("blog without url fails", async () => {
+
+      const user = await User.findOne({ username: 'root' })
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      const token = jwt.sign(userForToken, process.env.SECRET)
+
       const newBlog = {
         "title": "blablbla",
         "author": "test author", 
@@ -103,6 +157,7 @@ describe("blog api", () => {
       }
       await api
       .post("/api/blogs")
+      .set({ Authorization: token })
       .send(newBlog)
       .expect(400)
 
@@ -115,17 +170,50 @@ describe("blog api", () => {
 
 
   describe("deleting blogs", () => {
+
+    beforeEach(async () => {
+      await User.deleteMany()
+  
+      const passwordHash = await bcrypt.hash('sekret', 10)
+      const user = new User({ username: 'root', passwordHash })
+  
+      await user.save()
+
+    })
+
     test("succeds with status code 204 if id is valid", async () => {
-      const blogsAtStart = await helper.blogsInDb()
-      const blogToDelete = blogsAtStart[0]
+
+      const user = await User.findOne({ username: 'root' })
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      const token = jwt.sign(userForToken, process.env.SECRET)
+
+      const newBlog = {
+        "title": "Test blog x",
+        "author": "test author", 
+        "url": "www.test-url.com",
+        "likes": 100
+      }
+  
+      const response = await api
+        .post("/api/blogs")
+        .set({ Authorization: token })
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
   
       await api
-      .delete(`/api/blogs/${blogToDelete.id}`)
+      .delete(`/api/blogs/${response._body.id}`)
+      .set({ Authorization: token })
       .expect(204)
   
       const blogsAtEnd = await helper.blogsInDb()
   
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   
     })
   })
