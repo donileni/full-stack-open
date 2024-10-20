@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginServices from './services/login'
+import Notification from './components/Notification'
+import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +13,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,6 +36,12 @@ const App = () => {
     try {
       const user = await loginServices.login({ username, password })
 
+      setNotification(`Welcome ${user.name}`)
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
@@ -40,7 +49,13 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
+      setNotification(`tried to log in with wrong credentials`)
       console.log('Wrong credentials')
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+
     }
   }
 
@@ -62,9 +77,21 @@ const App = () => {
 
     try {
       await blogService.createBlog(newBlog)
+      setNotification(`a new blog ${newBlog.title} by ${newBlog.author} was added`)
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
 
     } catch (error) {
       console.log('error adding blog: ', error)
+
+      setNotification(`Error occured: ${error.response.data.message}`)
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+
     }
 
     setBlogs(blogs.concat(newBlog))
@@ -129,11 +156,12 @@ const App = () => {
       </div>
       <button type='submit'>create</button>
     </form>
-  )
+  ) 
 
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} />
       {user === null ? 
       loginForm() : 
       <div>
