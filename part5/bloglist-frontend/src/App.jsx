@@ -69,6 +69,7 @@ const App = () => {
     try {
       await blogService.createBlog(blogObject)
       setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`)
+      setBlogs(blogs.concat(blogObject))
 
       setTimeout(() => {
         setNotification(null)
@@ -84,7 +85,20 @@ const App = () => {
       }, 5000)
 
     }
-    setBlogs(blogs.concat(blogObject))
+  }
+
+  const addLike = async (blogObject, id) => {
+    try {
+      await blogService.updateBlog(blogObject, id)
+
+      const newBlogs = blogs.map(blog => blog.id === id ? {...blog, likes: blogObject.likes} : blog)
+      console.log('new blogs: ', newBlogs)
+
+      setBlogs(newBlogs)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const loginForm = () => (   
@@ -113,7 +127,7 @@ const App = () => {
 
   const createBlogForm = () => (
     <Togglable buttonLable='create a new blog'>
-      <CreateBlogForm createBlog={addBlog}/>
+      <CreateBlogForm createBlog={addBlog} user={user}/>
     </Togglable>
   )
 
@@ -127,7 +141,7 @@ const App = () => {
         <p>{user.name} is logged in <button onClick={handleLogout}> log out </button> </p>
         {createBlogForm()}
         {blogs.map(blog =>
-          <Blog key={blog.id || blog.title} blog={blog} />
+          <Blog key={blog.id || blog.title} blog={blog} updateBlog={addLike} />
         )}
       </div>
       }
