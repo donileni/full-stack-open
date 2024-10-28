@@ -21,8 +21,6 @@ const Blog = ({ blog, updateBlog }) => {
   const addLike = (event) => {
     event.preventDefault()
 
-    console.log('blog: ', blog)
-
     updateBlog({
       user: blog.user.id,
       likes: blog.likes + 1,
