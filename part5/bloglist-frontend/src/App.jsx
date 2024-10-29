@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginServices.login({ username, password })
 
@@ -48,7 +48,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      setNotification(`tried to log in with wrong credentials`)
+      setNotification('tried to log in with wrong credentials')
       console.log('Wrong credentials')
 
       setTimeout(() => {
@@ -69,7 +69,7 @@ const App = () => {
     try {
       const newBlog = await blogService.createBlog(blogObject)
       newBlog.user = user
-      
+
       setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`)
       setBlogs(blogs.concat(newBlog))
 
@@ -92,7 +92,7 @@ const App = () => {
   const addLike = async (blogObject, id) => {
     try {
       await blogService.updateBlog(blogObject, id)
-      const newBlogs = blogs.map(blog => blog.id === id ? {...blog, likes: blogObject.likes} : blog)
+      const newBlogs = blogs.map(blog => blog.id === id ? { ...blog, likes: blogObject.likes } : blog)
       setBlogs(newBlogs.sort((a, b) => b.likes - a.likes))
 
     } catch (error) {
@@ -110,28 +110,28 @@ const App = () => {
     }
   }
 
-  const loginForm = () => (   
-  <form onSubmit={handleLogin}>
-    <div>
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
       username
-      <input 
-      type='text'
-      value={username}
-      name='username'
-      onChange={( {target} ) => setUsername(target.value)}
-      />
-    </div>
-    <div>
+        <input
+          type='text'
+          value={username}
+          name='username'
+          onChange={( { target } ) => setUsername(target.value)}
+        />
+      </div>
+      <div>
       password
-      <input 
-      type='text'
-      value={password}
-      name='password'
-      onChange={( {target }) => setPassword(target.value)}
-      />
-    </div>
-    <button type='submit'>log in</button>
-  </form>
+        <input
+          type='text'
+          value={password}
+          name='password'
+          onChange={( { target }) => setPassword(target.value)}
+        />
+      </div>
+      <button type='submit'>log in</button>
+    </form>
   )
 
   const createBlogForm = () => (
@@ -144,15 +144,15 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={notification} />
-      {user === null ? 
-      loginForm() : 
-      <div>
-        <p>{user.name} is logged in <button onClick={handleLogout}> log out </button> </p>
-        {createBlogForm()}
-        {blogs.map(blog =>
-          <Blog key={blog.id || blog.title} blog={blog} updateBlog={addLike} user={user} deleteBlog={deleteBlog} />
-        )}
-      </div>
+      {user === null ?
+        loginForm() :
+        <div>
+          <p>{user.name} is logged in <button onClick={handleLogout}> log out </button> </p>
+          {createBlogForm()}
+          {blogs.map(blog =>
+            <Blog key={blog.id || blog.title} blog={blog} updateBlog={addLike} user={user} deleteBlog={deleteBlog} />
+          )}
+        </div>
       }
     </div>
   )
