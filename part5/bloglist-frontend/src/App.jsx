@@ -67,9 +67,11 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
-      await blogService.createBlog(blogObject)
+      const newBlog = await blogService.createBlog(blogObject)
+      newBlog.user = user
+      
       setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`)
-      setBlogs(blogs.concat(blogObject))
+      setBlogs(blogs.concat(newBlog))
 
       setTimeout(() => {
         setNotification(null)
@@ -93,6 +95,16 @@ const App = () => {
       const newBlogs = blogs.map(blog => blog.id === id ? {...blog, likes: blogObject.likes} : blog)
       setBlogs(newBlogs.sort((a, b) => b.likes - a.likes))
 
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.deleteBlog(id)
+      const newBlogs = blogs.filter(blog => blog.id !== id)
+      setBlogs(newBlogs)
     } catch (error) {
       console.log(error)
     }
@@ -138,7 +150,7 @@ const App = () => {
         <p>{user.name} is logged in <button onClick={handleLogout}> log out </button> </p>
         {createBlogForm()}
         {blogs.map(blog =>
-          <Blog key={blog.id || blog.title} blog={blog} updateBlog={addLike} />
+          <Blog key={blog.id || blog.title} blog={blog} updateBlog={addLike} user={user} deleteBlog={deleteBlog} />
         )}
       </div>
       }
