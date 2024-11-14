@@ -63,3 +63,38 @@ test('render extended content when button is clicked', async () => {
     expect(likes).toHaveTextContent('0')
 
 })
+
+test('when likes is clicked twice, even handler is called twice', async () => {
+    const blog = {
+        title: 'test title',
+        author: 'ada',
+        url: 'https//:test.com',
+        likes: 0,
+        user: {
+            username: 'david',
+            name: 'David Olsson',
+            id: '671e131abcdbd7c7a4295670',
+        }
+    }
+
+    const user = {
+        username: 'david',
+        name: 'David Olsson',
+        id: '671e131abcdbd7c7a4295670',
+    }
+
+    const mockHandler = vi.fn()
+
+    render(<Blog blog={blog} user={user} updateBlog={mockHandler}/>)
+
+    const exampleUser = userEvent.setup()
+    const button = screen.getByText('view')
+    await exampleUser.click(button)
+
+    const likeButton = screen.getByText('like')
+    await exampleUser.click(likeButton)
+    await exampleUser.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+
+})
