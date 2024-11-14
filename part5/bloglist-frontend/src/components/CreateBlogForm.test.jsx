@@ -24,9 +24,6 @@ test('calls event handler with right details', async () => {
 
     await exampleUser.click(sendButton)
 
-    console.log('test: ', createBlog.mock.calls)
-    console.log('test2: ', createBlog.mock.calls[0][0])
-
     expect(createBlog.mock.calls).toHaveLength(1)
     expect(createBlog.mock.calls[0][0].title).toBe('test title')
     expect(createBlog.mock.calls[0][0].author).toBe('test author')
