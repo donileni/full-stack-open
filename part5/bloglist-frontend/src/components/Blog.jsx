@@ -43,23 +43,24 @@ const Blog = ({ blog, updateBlog, user, deleteBlog }) => {
         }
     }
 
-    return (
-        <div>
+    if (!visible) {
+        return(
             <div style={{ ...blogStyle, ...hideWhenVisible }} className='defaultBlog'>
                 {blog.title} {blog.author}
                 <button onClick={handleVisible}>view</button>
             </div>
+        )
+    } else {
+        return(
             <div style={{ ...blogStyle, ...showWhenVisible }} className='extendedBlog'>
-                <div>{blog.title} {blog.author} <button onClick={handleVisible}>hide</button></div>
-
-                <div>{blog.url}</div>
-                <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
-                <div>{blog.user.name}</div>
+                <div className='extended-title-author'>{blog.title} {blog.author} <button onClick={handleVisible}>hide</button></div>
+                <div className='extended-url'>{blog.url}</div>
+                <div className='extended-likes'>likes {blog.likes} <button onClick={addLike}>like</button></div>
+                <div className='extended-name'>{blog.user.name}</div>
                 <div style={hideButton}> <button onClick={removeBlog}>remove</button></div>
             </div>
-        </div>
-
-    )
+        )
+    }
 }
 
 
