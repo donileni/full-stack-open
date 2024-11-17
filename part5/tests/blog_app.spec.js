@@ -41,7 +41,7 @@ describe('Blog app', () => {
             await loginWith(page, 'david', '123')
         })
 
-        test('a new blog can be created', async ({ page }) => {
+        test('A new blog can be created', async ({ page }) => {
             await createBlog(page, 'test title', 'test author', 'test url')
             await expect(page.getByText('test title test author')).toBeVisible()
         })
@@ -62,6 +62,28 @@ describe('Blog app', () => {
             await page.getByRole('button', { name: 'remove'}).click()
 
             await expect(page.getByText('test title test author')).not.toBeVisible()
+        })
+    })
+
+    describe('New user login', () => {
+        beforeEach(async ({ page, request }) => {
+            await request.post('http://localhost:3003/api/users', {
+                data: {
+                    name: 'Test user',
+                    username: 'test',
+                    password: '123'
+                }
+            })
+        })
+        test.only('only authorized user sees delete button', async ({ page }) => {
+            await loginWith(page, 'david', '123')
+            await createBlog(page, 'test title', 'test author', 'test url')
+            await page.getByRole('button', { name: 'log out' }).click()
+
+            await loginWith(page, 'test', '123')
+            await page.getByRole('button', { name: 'view' }).click()
+            
+            await expect(page.getByText('remove')).not.toBeVisible()
         })
     })
 })
