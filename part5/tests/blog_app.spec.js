@@ -1,11 +1,39 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith } = require('./helper')
 
 describe('Blog app', () => {
-    beforeEach(async ({ page}) => {
+    beforeEach(async ({ page, request }) => {
+        await request.post('http://localhost:3003/api/testing/reset')
+        await request.post('http://localhost:3003/api/users', {
+            data: {
+                name: 'David Olsson',
+                username: 'david',
+                password: '123'
+            }
+        })
+
         await page.goto('http://localhost:5173/')
     })
 
     test('Login form is shown', async ({ page }) => {
         await expect(await page.getByTestId('login-form')).toBeVisible()
+    })
+
+    describe('Login', () => {
+        test('succeeds with correct credentials', async ({ page }) => {
+            await loginWith(page, 'david', '123')
+
+            await expect(page.getByText('David Olsson is logged in')).toBeVisible()
+        })
+
+        test('fails with wrong credentials', async ({ page }) => {
+            await loginWith(page, 'david', 'wrong')
+
+            const errorDiv = await page.locator('.error')
+
+            await expect(errorDiv).toHaveText('tried to log in with wrong credentials')
+
+            await expect(page.getByText('David Olsson is logged in')).not.toBeVisible()
+        })
     })
 })
