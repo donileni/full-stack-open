@@ -1,5 +1,7 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { loginWith, createBlog, likeBlog } = require('./helper')
+const { name } = require('../playwright.config')
+const { log } = require('console')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -66,7 +68,7 @@ describe('Blog app', () => {
     })
 
     describe('New user login', () => {
-        beforeEach(async ({ page, request }) => {
+        beforeEach(async ({ request }) => {
             await request.post('http://localhost:3003/api/users', {
                 data: {
                     name: 'Test user',
@@ -75,7 +77,7 @@ describe('Blog app', () => {
                 }
             })
         })
-        test.only('only authorized user sees delete button', async ({ page }) => {
+        test('only authorized user sees delete button', async ({ page }) => {
             await loginWith(page, 'david', '123')
             await createBlog(page, 'test title', 'test author', 'test url')
             await page.getByRole('button', { name: 'log out' }).click()
@@ -84,6 +86,33 @@ describe('Blog app', () => {
             await page.getByRole('button', { name: 'view' }).click()
             
             await expect(page.getByText('remove')).not.toBeVisible()
+        })
+    })
+
+    describe('More than one blog exists', () => {
+        beforeEach(async ({ page }) => {
+            await loginWith(page, 'david', '123')
+            await createBlog(page, 'first blog', 'test author', 'test url')
+            await page.getByRole('button', { name: 'cancel '}).click()
+            await createBlog(page, 'second blog', 'test author', 'test url')
+        })
+
+        test('Blogs are arranged in order of likes', async ({ page }) => {
+            const firstBlog = await page.locator('.defaultBlog').first()
+
+            await firstBlog.getByRole('button', { name: 'view '}).click()
+            await likeBlog(page, 1)
+            await page.getByRole('button', { name: 'hide' }).click()
+
+            const secondBlog = await page.locator('.defaultBlog').last()
+            await secondBlog.getByRole('button', { name: 'view '}).click()
+            await likeBlog(page, 2)
+            await page.getByRole('button', { name: 'hide' }).click()
+
+            const newFirstBlog = await page.locator('.defaultBlog').first()
+
+            await expect(newFirstBlog.getByText('second blog')).toBeVisible()
+
         })
     })
 })
