@@ -13,7 +13,6 @@ const App = () => {
     dispatch(initializeAnecdotes())
   }, [])
 
-
   return (
     <div>
       <h2>Anecdotes</h2>
