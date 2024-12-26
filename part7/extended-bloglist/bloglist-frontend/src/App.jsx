@@ -6,13 +6,16 @@ import Notification from "./components/Notification";
 import "./index.css";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
+import { useDispatch, useSelector } from "react-redux";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notification, setNotification] = useState(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService
@@ -35,11 +38,7 @@ const App = () => {
     try {
       const user = await loginServices.login({ username, password });
 
-      setNotification(`Welcome ${user.name}`);
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotification(`Welcome ${user.name}`, 5));
 
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
@@ -48,12 +47,8 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (error) {
-      setNotification("tried to log in with wrong credentials");
+      dispatch(setNotification("tried to log in with wrong credentials"));
       console.log("Wrong credentials");
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
     }
   };
 
@@ -69,22 +64,17 @@ const App = () => {
       const newBlog = await blogService.createBlog(blogObject);
       newBlog.user = user;
 
-      setNotification(
-        `a new blog ${blogObject.title} by ${blogObject.author} was added`,
+      dispatch(
+        setNotification(
+          `a new blog ${blogObject.title} by ${blogObject.author} was added`,
+          5,
+        ),
       );
       setBlogs(blogs.concat(newBlog));
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
     } catch (error) {
       console.log("error adding blog: ", error);
 
-      setNotification(`Error occured: ${error.response.data.message}`);
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotification(`Error occured: ${error.response.data.message}`))
     }
   };
 
@@ -145,7 +135,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notification} />
+      <Notification />
       {user === null ? (
         loginForm()
       ) : (
