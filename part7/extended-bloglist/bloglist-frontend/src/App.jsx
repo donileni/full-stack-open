@@ -8,7 +8,7 @@ import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -16,10 +16,10 @@ const App = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs)
+  const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
-    dispatch(initializeBlogs())
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
@@ -56,28 +56,6 @@ const App = () => {
 
     window.localStorage.clear();
     setUser(null);
-  };
-
-  const addLike = async (blogObject, id) => {
-    try {
-      await blogService.updateBlog(blogObject, id);
-      const newBlogs = blogs.map((blog) =>
-        blog.id === id ? { ...blog, likes: blogObject.likes } : blog,
-      );
-      setBlogs(newBlogs.sort((a, b) => b.likes - a.likes));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteBlog = async (id) => {
-    try {
-      await blogService.deleteBlog(id);
-      const newBlogs = blogs.filter((blog) => blog.id !== id);
-      setBlogs(newBlogs);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const loginForm = () => (
@@ -129,9 +107,7 @@ const App = () => {
             <Blog
               key={blog.id || blog.title}
               blog={blog}
-              updateBlog={addLike}
               user={user}
-              deleteBlog={deleteBlog}
             />
           ))}
         </div>
