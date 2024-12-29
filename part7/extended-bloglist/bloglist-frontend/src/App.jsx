@@ -8,19 +8,18 @@ import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
+  const blogs = useSelector(state => state.blogs)
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
+    dispatch(initializeBlogs())
   }, []);
 
   useEffect(() => {
@@ -57,25 +56,6 @@ const App = () => {
 
     window.localStorage.clear();
     setUser(null);
-  };
-
-  const addBlog = async (blogObject) => {
-    try {
-      const newBlog = await blogService.createBlog(blogObject);
-      newBlog.user = user;
-
-      dispatch(
-        setNotification(
-          `a new blog ${blogObject.title} by ${blogObject.author} was added`,
-          5,
-        ),
-      );
-      setBlogs(blogs.concat(newBlog));
-    } catch (error) {
-      console.log("error adding blog: ", error);
-
-      dispatch(setNotification(`Error occured: ${error.response.data.message}`))
-    }
   };
 
   const addLike = async (blogObject, id) => {
@@ -128,7 +108,7 @@ const App = () => {
 
   const createBlogForm = () => (
     <Togglable buttonLable="create a new blog">
-      <CreateBlogForm createBlog={addBlog} user={user} />
+      <CreateBlogForm user={user} />
     </Togglable>
   );
 
