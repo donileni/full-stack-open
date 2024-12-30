@@ -9,14 +9,15 @@ import CreateBlogForm from "./components/CreateBlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs } from "./reducers/blogReducer";
+import { setUserState } from "./reducers/userReducer";
 
 const App = () => {
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state => state.user))
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -26,7 +27,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUserState(user))
       blogService.setToken(user.token);
     }
   }, []);
@@ -42,7 +43,7 @@ const App = () => {
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
-      setUser(user);
+      dispatch(setUserState(user))
       setUsername("");
       setPassword("");
     } catch (error) {
@@ -55,7 +56,7 @@ const App = () => {
     event.preventDefault();
 
     window.localStorage.clear();
-    setUser(null);
+    dispatch(setUserState(null))
   };
 
   const loginForm = () => (
