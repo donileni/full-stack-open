@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import Blogs from "./components/Blogs";
 import blogService from "./services/blogs";
 import loginServices from "./services/login";
 import Notification from "./components/Notification";
@@ -16,8 +17,8 @@ const App = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
-  const blogs = useSelector((state) => state.blogs);
-  const user = useSelector((state => state.user))
+  //const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -27,7 +28,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      dispatch(setUserState(user))
+      dispatch(setUserState(user));
       blogService.setToken(user.token);
     }
   }, []);
@@ -43,7 +44,7 @@ const App = () => {
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
-      dispatch(setUserState(user))
+      dispatch(setUserState(user));
       setUsername("");
       setPassword("");
     } catch (error) {
@@ -56,7 +57,7 @@ const App = () => {
     event.preventDefault();
 
     window.localStorage.clear();
-    dispatch(setUserState(null))
+    dispatch(setUserState(null));
   };
 
   const loginForm = () => (
@@ -104,13 +105,7 @@ const App = () => {
             <button onClick={handleLogout}> log out </button>{" "}
           </p>
           {createBlogForm()}
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id || blog.title}
-              blog={blog}
-              user={user}
-            />
-          ))}
+          <Blogs />
         </div>
       )}
     </div>
