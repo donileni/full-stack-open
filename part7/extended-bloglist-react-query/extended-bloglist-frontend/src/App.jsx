@@ -7,37 +7,20 @@ import "./index.css";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
 import { useNotificationDispatch } from "../NotificationContext";
-//import { useBlogsValue, useBlogsDispatch } from "../BlogContext";
-import { createContext, useContext, useReducer } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUserDispatch, useUserValue } from "./UserContext";
 
-// const useInitBlogs = () => {
-//   const blogs = useBlogsValue()
-//   const blogDispatch = useBlogsDispatch()
-
-//   const result = useQuery({
-//     queryKey: ["blogs"],
-//     queryFn: blogService.getAll,
-//     initialData: [],
-//   });
-
-//   if (result.data) {
-//     blogDispatch({ type: "SET", payload: result.data })
-//   }
-
-//   return {blogs, blogDispatch}
-// }
 
 const App = () => {
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const queryClient = useQueryClient()
 
-  //const {blogs, blogDispatch} = useInitBlogs() 
-
   const notificationDispatch = useNotificationDispatch();
+  const user = useUserValue()
+  const userDispatch = useUserDispatch()
+
   const newBlogMutation = useMutation({ 
     mutationFn: blogService.createBlog,
     onSuccess: () => {
@@ -59,12 +42,11 @@ const App = () => {
     }
   })
 
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      userDispatch({type: "SET_USER", payload: user})
       blogService.setToken(user.token);
     }
   }, []);
@@ -72,7 +54,8 @@ const App = () => {
   const result = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    retry: 1
   })
 
   if ( result.isLoading ) {
@@ -99,7 +82,7 @@ const App = () => {
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
-      setUser(user);
+      userDispatch({type: "SET_USER", payload: user})
       setUsername("");
       setPassword("");
     } catch (error) {
@@ -112,13 +95,11 @@ const App = () => {
     event.preventDefault();
 
     window.localStorage.clear();
-    setUser(null);
+    userDispatch({type: "RESET_USER"});
   };
 
   const addBlog = async (blogObject) => {
     try {
-
-      //blogObject.user = user
 
       newBlogMutation.mutate( blogObject )
       setNotification(
