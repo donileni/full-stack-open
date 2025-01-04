@@ -45,6 +45,20 @@ const App = () => {
     }
   })
 
+  const likeBlogMutation = useMutation({
+    mutationFn: blogService.updateBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    }
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    }
+  })
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -120,11 +134,7 @@ const App = () => {
 
   const addLike = async (blogObject, id) => {
     try {
-      await blogService.updateBlog(blogObject, id);
-      const newBlogs = blogs.map((blog) =>
-        blog.id === id ? { ...blog, likes: blogObject.likes } : blog,
-      );
-      setBlogs(newBlogs.sort((a, b) => b.likes - a.likes));
+      likeBlogMutation.mutate({ blogObject, id })
     } catch (error) {
       console.log(error);
     }
@@ -132,9 +142,7 @@ const App = () => {
 
   const deleteBlog = async (id) => {
     try {
-      await blogService.deleteBlog(id);
-      const newBlogs = blogs.filter((blog) => blog.id !== id);
-      setBlogs(newBlogs);
+      deleteBlogMutation.mutate(id)
     } catch (error) {
       console.log(error);
     }
