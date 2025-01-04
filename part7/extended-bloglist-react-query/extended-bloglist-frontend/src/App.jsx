@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginServices from "./services/login";
@@ -6,24 +6,45 @@ import Notification from "./components/Notification";
 import "./index.css";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
-import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
-import {useNotificationDispatch} from "../NotificationContext";
+import { useNotificationDispatch } from "../NotificationContext";
+//import { useBlogsValue, useBlogsDispatch } from "../BlogContext";
+import { createContext, useContext, useReducer } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
+// const useInitBlogs = () => {
+//   const blogs = useBlogsValue()
+//   const blogDispatch = useBlogsDispatch()
+
+//   const result = useQuery({
+//     queryKey: ["blogs"],
+//     queryFn: blogService.getAll,
+//     initialData: [],
+//   });
+
+//   if (result.data) {
+//     blogDispatch({ type: "SET", payload: result.data })
+//   }
+
+//   return {blogs, blogDispatch}
+// }
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const notificationDispatch = useNotificationDispatch()
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-  }, []);
+  //const {blogs, blogDispatch} = useInitBlogs() 
+
+  const notificationDispatch = useNotificationDispatch();
+  const newBlogMutation = useMutation({ 
+    mutationFn: blogService.createBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    }
+  })
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -34,12 +55,24 @@ const App = () => {
     }
   }, []);
 
-  const setNotification = (content, time) => {
-    notificationDispatch({type: "SET", payload: content})
-    setTimeout(() => {
-      notificationDispatch({type: "RESET"})
-    }, time * 1000);
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false
+  })
+
+  if ( result.isLoading ) {
+    return <div>loading data...</div>
   }
+
+  const blogs = result.data
+
+  const setNotification = (content, time) => {
+    notificationDispatch({ type: "SET", payload: content });
+    setTimeout(() => {
+      notificationDispatch({ type: "RESET" });
+    }, time * 1000);
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -47,7 +80,7 @@ const App = () => {
     try {
       const user = await loginServices.login({ username, password });
 
-      setNotification(`Welcome ${user.name}`, 5)
+      setNotification(`Welcome ${user.name}`, 5);
 
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
@@ -70,12 +103,14 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.createBlog(blogObject);
-      newBlog.user = user;
 
-      setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`, 5);
-      setBlogs(blogs.concat(newBlog));
+      //blogObject.user = user
 
+      newBlogMutation.mutate( blogObject )
+      setNotification(
+        `a new blog ${blogObject.title} by ${blogObject.author} was added`,
+        5,
+      );
     } catch (error) {
       console.log("error adding blog: ", error);
 
