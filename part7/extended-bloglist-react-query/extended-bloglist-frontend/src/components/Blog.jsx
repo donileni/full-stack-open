@@ -1,7 +1,26 @@
 import { useState } from "react";
+import { useUserValue } from "../UserContext";
+import blogService from "../services/blogs";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "../main";
 
-const Blog = ({ blog, updateBlog, user, deleteBlog }) => {
+const Blog = ({ blog }) => {
   const [visible, setVisible] = useState(false);
+  const user = useUserValue();
+
+  const likeBlogMutation = useMutation({
+    mutationFn: blogService.updateBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
 
   const blogStyle = {
     paddingTop: 10,
@@ -24,25 +43,22 @@ const Blog = ({ blog, updateBlog, user, deleteBlog }) => {
     setVisible(!visible);
   };
 
-  const addLike = (event) => {
+  const addLike = async (event) => {
     event.preventDefault();
-    
-    updateBlog(
-      {
-        user: blog.user.id,
-        likes: blog.likes + 1,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url,
-      },
-      blog.id,
-    );
+    try {
+      const blogObject = { ...blog, user: blog.user.id, likes: blog.likes + 1 };
+      const id = blog.id;
+
+      likeBlogMutation.mutate({ blogObject, id });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const removeBlog = (event) => {
     event.preventDefault();
     if (window.confirm(`remove blog ${blog.title} by ${blog.user.name}`)) {
-      deleteBlog(blog.id);
+      deleteBlogMutation.mutate(blog.id)
     }
   };
 

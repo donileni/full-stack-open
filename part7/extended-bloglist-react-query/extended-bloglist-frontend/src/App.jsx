@@ -1,68 +1,30 @@
-import { useState, useEffect, useImperativeHandle } from "react";
-import Blog from "./components/Blog";
+import "./index.css";
+import { useState, useEffect } from "react";
 import blogService from "./services/blogs";
 import loginServices from "./services/login";
+import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
-import "./index.css";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
 import { useNotificationDispatch } from "../NotificationContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUserDispatch, useUserValue } from "./UserContext";
-
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const queryClient = useQueryClient()
-
   const notificationDispatch = useNotificationDispatch();
-  const user = useUserValue()
-  const userDispatch = useUserDispatch()
-
-  const newBlogMutation = useMutation({ 
-    mutationFn: blogService.createBlog,
-    onSuccess: () => {
-      queryClient.invalidateQueries('blogs')
-    }
-  })
-
-  const likeBlogMutation = useMutation({
-    mutationFn: blogService.updateBlog,
-    onSuccess: () => {
-      queryClient.invalidateQueries('blogs')
-    }
-  })
-
-  const deleteBlogMutation = useMutation({
-    mutationFn: blogService.deleteBlog,
-    onSuccess: () => {
-      queryClient.invalidateQueries('blogs')
-    }
-  })
+  const user = useUserValue();
+  const userDispatch = useUserDispatch();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      userDispatch({type: "SET_USER", payload: user})
+      userDispatch({ type: "SET_USER", payload: user });
       blogService.setToken(user.token);
     }
   }, []);
-
-  const result = useQuery({
-    queryKey: ['blogs'],
-    queryFn: blogService.getAll,
-    refetchOnWindowFocus: false,
-    retry: 1
-  })
-
-  if ( result.isLoading ) {
-    return <div>loading data...</div>
-  }
-
-  const blogs = result.data
 
   const setNotification = (content, time) => {
     notificationDispatch({ type: "SET", payload: content });
@@ -82,7 +44,7 @@ const App = () => {
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
-      userDispatch({type: "SET_USER", payload: user})
+      userDispatch({ type: "SET_USER", payload: user });
       setUsername("");
       setPassword("");
     } catch (error) {
@@ -95,38 +57,7 @@ const App = () => {
     event.preventDefault();
 
     window.localStorage.clear();
-    userDispatch({type: "RESET_USER"});
-  };
-
-  const addBlog = async (blogObject) => {
-    try {
-
-      newBlogMutation.mutate( blogObject )
-      setNotification(
-        `a new blog ${blogObject.title} by ${blogObject.author} was added`,
-        5,
-      );
-    } catch (error) {
-      console.log("error adding blog: ", error);
-
-      setNotification(`Error occured: ${error.response.data.message}`, 5);
-    }
-  };
-
-  const addLike = async (blogObject, id) => {
-    try {
-      likeBlogMutation.mutate({ blogObject, id })
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteBlog = async (id) => {
-    try {
-      deleteBlogMutation.mutate(id)
-    } catch (error) {
-      console.log(error);
-    }
+    userDispatch({ type: "RESET_USER" });
   };
 
   const loginForm = () => (
@@ -157,7 +88,7 @@ const App = () => {
 
   const createBlogForm = () => (
     <Togglable buttonLable="create a new blog">
-      <CreateBlogForm createBlog={addBlog} user={user} />
+      <CreateBlogForm />
     </Togglable>
   );
 
@@ -174,15 +105,7 @@ const App = () => {
             <button onClick={handleLogout}> log out </button>{" "}
           </p>
           {createBlogForm()}
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id || blog.title}
-              blog={blog}
-              updateBlog={addLike}
-              user={user}
-              deleteBlog={deleteBlog}
-            />
-          ))}
+          <Blogs />
         </div>
       )}
     </div>
