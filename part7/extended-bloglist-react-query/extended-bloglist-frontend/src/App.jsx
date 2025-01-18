@@ -14,8 +14,8 @@ const App = () => {
   const [password, setPassword] = useState("");
 
   const notificationDispatch = useNotificationDispatch();
-  const user = useUserValue();
   const userDispatch = useUserDispatch();
+  const user = useUserValue();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");

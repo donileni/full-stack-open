@@ -14,7 +14,7 @@ const Blogs = () => {
     return <div>loading data...</div>;
   }
 
-  const blogs = result.data;
+  const blogs = result.data.sort((a, b) => b.likes - a.likes);
 
   return (
     <div>

@@ -1,8 +1,6 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
-const { error } = require("../utils/logger");
 const middleware = require("../utils/middleware");
 
 blogsRouter.get("/", async (request, response) => {
@@ -44,6 +42,7 @@ blogsRouter.delete(
 
     if (blog.user.toString() === user.id.toString()) {
       await Blog.findByIdAndDelete(request.params.id);
+      await User.findByIdAndUpdate(user.id, { $pull: { blogs: blog.id } })
       response.status(204).end();
     } else {
       response.status(401).json({ error: "user can only delete own blogs" });
