@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { useUserValue } from "../UserContext";
 import blogService from "../services/blogs";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../main";
+import { useParams } from "react-router-dom";
 
-const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = () => {
   const user = useUserValue();
+  const id = useParams().id
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.updateBlog,
@@ -22,26 +22,23 @@ const Blog = ({ blog }) => {
     },
   });
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+  const result = useQuery({
+    queryKey: ['blog'],
+    queryFn: () => blogService.getBlog(id),
+    retry: 1
+  })
 
-  const hideWhenVisible = { display: visible ? "none" : "" };
-  const showWhenVisible = { display: visible ? "" : "none" };
+  if (result.isLoading) {
+    return <div>loading data...</div>; 
+  }
+
+  const blog = result.data
 
   let hideButton;
 
   if (user.username !== blog.user.username) {
     hideButton = { display: "none" };
   }
-
-  const handleVisible = () => {
-    setVisible(!visible);
-  };
 
   const addLike = async (event) => {
     event.preventDefault();
@@ -62,35 +59,18 @@ const Blog = ({ blog }) => {
     }
   };
 
-  if (!visible) {
-    return (
-      <div style={{ ...blogStyle, ...hideWhenVisible }} className="defaultBlog">
-        {blog.title} {blog.author}
-        <button onClick={handleVisible}>view</button>
-      </div>
-    );
-  } else {
-    return (
-      <div
-        style={{ ...blogStyle, ...showWhenVisible }}
-        className="extendedBlog"
-      >
-        <div className="extended-title-author">
-          {blog.title} {blog.author}{" "}
-          <button onClick={handleVisible}>hide</button>
-        </div>
-        <div className="extended-url">{blog.url}</div>
-        <div className="extended-likes">
-          likes {blog.likes} <button onClick={addLike}>like</button>
-        </div>
-        <div className="extended-name">{blog.user.name}</div>
-        <div style={hideButton}>
+  return (
+    <div>
+      <h2>{`${blog.title} ${blog.author}`}</h2>
+      <div><a href={blog.url}>{blog.url}</a></div>
+      <div>{`${blog.likes} likes`} <button onClick={addLike}>like</button> </div>
+      <div>{`added by ${blog.user.name}`}</div>
+      <div style={hideButton}>
           {" "}
           <button onClick={removeBlog}>remove</button>
         </div>
-      </div>
-    );
-  }
+    </div>
+  )
 };
 
 export default Blog;

@@ -2,6 +2,7 @@ import "./index.css";
 import { useEffect } from "react";
 import blogService from "./services/blogs";
 import Blogs from "./components/Blogs";
+import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
@@ -59,10 +60,11 @@ const App = () => {
           <p><button onClick={handleLogout}> log out </button>{" "}</p>
           
           <Routes>
+            <Route path="/" element={<Blogs />} />
+            <Route path="/blogs/:id" element={<Blog />}/>
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<User />} />
           </Routes>
-
         </div>
       )}
     </div>
