@@ -6,9 +6,10 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import CreateBlogForm from "./components/CreateBlogForm";
 import Users from "./components/Users"
+import User from "./components/User";
 import { useNotificationDispatch } from "../NotificationContext";
 import { useUserDispatch, useUserValue } from "./UserContext";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 
 const App = () => {
@@ -59,6 +60,7 @@ const App = () => {
           
           <Routes>
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
           </Routes>
 
         </div>
