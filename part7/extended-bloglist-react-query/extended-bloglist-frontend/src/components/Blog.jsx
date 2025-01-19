@@ -3,10 +3,11 @@ import blogService from "../services/blogs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../main";
 import { useParams } from "react-router-dom";
+import CommentSection from "./CommentSection";
 
 const Blog = () => {
   const user = useUserValue();
-  const id = useParams().id
+  const id = useParams().id;
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.updateBlog,
@@ -23,16 +24,16 @@ const Blog = () => {
   });
 
   const result = useQuery({
-    queryKey: ['blog'],
+    queryKey: ["blog"],
     queryFn: () => blogService.getBlog(id),
-    retry: 1
-  })
+    retry: 1,
+  });
 
   if (result.isLoading) {
-    return <div>loading data...</div>; 
+    return <div>loading data...</div>;
   }
 
-  const blog = result.data
+  const blog = result.data;
 
   let hideButton;
 
@@ -55,22 +56,27 @@ const Blog = () => {
   const removeBlog = (event) => {
     event.preventDefault();
     if (window.confirm(`remove blog ${blog.title} by ${blog.user.name}`)) {
-      deleteBlogMutation.mutate(blog.id)
+      deleteBlogMutation.mutate(blog.id);
     }
   };
 
   return (
     <div>
       <h2>{`${blog.title} ${blog.author}`}</h2>
-      <div><a href={blog.url}>{blog.url}</a></div>
-      <div>{`${blog.likes} likes`} <button onClick={addLike}>like</button> </div>
+      <div>
+        <a href={blog.url}>{blog.url}</a>
+      </div>
+      <div>
+        {`${blog.likes} likes`} <button onClick={addLike}>like</button>{" "}
+      </div>
       <div>{`added by ${blog.user.name}`}</div>
       <div style={hideButton}>
-          {" "}
-          <button onClick={removeBlog}>remove</button>
-        </div>
+        {" "}
+        <button onClick={removeBlog}>remove</button>
+      </div>
+      <CommentSection blog={blog} />
     </div>
-  )
+  );
 };
 
 export default Blog;
