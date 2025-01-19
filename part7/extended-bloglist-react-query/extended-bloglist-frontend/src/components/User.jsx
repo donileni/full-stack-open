@@ -27,8 +27,6 @@ const User = () => {
 
   const user = userResult.data;
 
-  console.log(user);
-
   return (
     <div>
       <h2>{user.name}</h2>

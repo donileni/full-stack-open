@@ -4,15 +4,13 @@ import blogService from "./services/blogs";
 import Blogs from "./components/Blogs";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
-import Users from "./components/Users"
+import Users from "./components/Users";
 import User from "./components/User";
-import { useNotificationDispatch } from "../NotificationContext";
 import { useUserDispatch, useUserValue } from "./UserContext";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 
 const App = () => {
-  const notificationDispatch = useNotificationDispatch();
   const userDispatch = useUserDispatch();
   const user = useUserValue();
 
@@ -32,27 +30,37 @@ const App = () => {
     userDispatch({ type: "RESET_USER" });
   };
 
+  const padding = {
+    padding: 5,
+  };
+
   return (
     <Router>
       <div>
-      <h2>blogs</h2>
-      <Notification />
-      {user === null ? (
-        <LoginForm />
-      ) : (
-        <div>
-          <p>{user.name} is logged in{" "}</p>
-          <p><button onClick={handleLogout}> log out </button>{" "}</p>
-          
-          <Routes>
-            <Route path="/" element={<Blogs />} />
-            <Route path="/blogs/:id" element={<Blog />}/>
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<User />} />
-          </Routes>
-        </div>
-      )}
-    </div>
+        {user === null ? (
+          <div>
+            <h2>blogs</h2>
+            <LoginForm />
+          </div>
+        ) : (
+          <div>
+            <div>
+              <Link style={padding} to="/">blogs</Link>
+              <Link style={padding} to="/users">users</Link>
+              {user.name} is logged in{" "}
+              <button onClick={handleLogout}> log out </button>{" "}
+              <h2>blogs</h2>
+            </div>
+            <Notification />
+            <Routes>
+              <Route path="/" element={<Blogs />} />
+              <Route path="/blogs/:id" element={<Blog />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<User />} />
+            </Routes>
+          </div>
+        )}
+      </div>
     </Router>
   );
 };
