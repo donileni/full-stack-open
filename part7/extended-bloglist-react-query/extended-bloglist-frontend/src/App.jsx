@@ -4,8 +4,6 @@ import blogService from "./services/blogs";
 import Blogs from "./components/Blogs";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
-import CreateBlogForm from "./components/CreateBlogForm";
 import Users from "./components/Users"
 import User from "./components/User";
 import { useNotificationDispatch } from "../NotificationContext";
@@ -27,25 +25,12 @@ const App = () => {
     }
   }, []);
 
-  const setNotification = (content, time) => {
-    notificationDispatch({ type: "SET", payload: content });
-    setTimeout(() => {
-      notificationDispatch({ type: "RESET" });
-    }, time * 1000);
-  };
-
   const handleLogout = async (event) => {
     event.preventDefault();
 
     window.localStorage.clear();
     userDispatch({ type: "RESET_USER" });
   };
-
-  const createBlogForm = () => (
-    <Togglable buttonLable="create a new blog">
-      <CreateBlogForm />
-    </Togglable>
-  );
 
   return (
     <Router>
