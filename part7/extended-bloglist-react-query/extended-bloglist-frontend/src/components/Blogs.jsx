@@ -3,6 +3,7 @@ import blogService from "../services/blogs"
 import { Link } from "react-router-dom";
 import CreateBlogForm from "./CreateBlogForm";
 import Togglable from "./Togglable";
+import { Table } from "react-bootstrap";
 
 const Blogs = () => {
   const result = useQuery({
@@ -11,14 +12,6 @@ const Blogs = () => {
     refetchOnWindowFocus: false,
     retry: 1,
   });
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
 
   if (result.isLoading) {
     return <div>loading data...</div>;
@@ -35,9 +28,17 @@ const Blogs = () => {
   return (
     <div>
       {createBlogForm()}
-      {blogs.map((blog) => (
-        <div key={blog.id} style={{...blogStyle}}> <Link to={`/blogs/${blog.id}`}> {blog.title} {blog.author} </Link></div>
-      ))}
+      <Table striped>
+        <tbody>
+          {blogs.map(blog => 
+            <tr key={blog.id}>
+              <td>
+                <Link to={`/blogs/${blog.id}`}> {blog.title} {blog.author} </Link>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 };

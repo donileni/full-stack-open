@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import userService from "../services/users";
 import { Link } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 const Users = () => {
   const result = useQuery({
@@ -19,7 +20,7 @@ const Users = () => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
+      <Table striped>
         <tbody>
           <tr>
             <th></th>
@@ -32,7 +33,7 @@ const Users = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

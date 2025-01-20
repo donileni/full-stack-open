@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import blogService from "../services/blogs";
 import { queryClient } from "../main";
+import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 
 const CommentSection = ({ blog }) => {
   const [comment, setComment] = useState("");
@@ -34,21 +35,27 @@ const CommentSection = ({ blog }) => {
   return (
     <div>
       <h3>comments</h3>
-      <form onSubmit={addComment}>
-        <input
-          data-testid="comment"
-          type="text"
-          value={comment}
-          name="comment"
-          onChange={({ target }) => setComment(target.value)}
-        />
-        <button type="submit">add comment</button>
-      </form>
-      <ul>
-        {blog.comments.map((comment) => (
-          <li key={comment}>{comment}</li>
+      <Form onSubmit={addComment}>
+        <Form.Group>
+          <Form.Control 
+            data-testid="comment"
+            type="text"
+            value={comment}
+            name="comment"
+            onChange={({ target }) => setComment(target.value)}
+          />
+        </Form.Group>
+        <div style={{paddingTop: 5, paddingBottom: 5}} >
+          <Button type="submit">
+            add comment
+          </Button>
+        </div>
+      </Form>
+      <ListGroup>
+      {blog.comments.map((comment) => (
+        <ListGroupItem key={comment}>{comment}</ListGroupItem>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 };

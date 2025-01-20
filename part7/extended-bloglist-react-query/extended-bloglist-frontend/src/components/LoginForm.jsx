@@ -4,6 +4,7 @@ import blogService from "../services/blogs";
 import { useUserDispatch } from "../UserContext";
 import { useNotificationDispatch } from "../../NotificationContext";
 import { useState } from "react";
+import { Form, Button } from "react-bootstrap";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -39,29 +40,34 @@ const LoginForm = () => {
   };
 
   return (
-    <form data-testid="login-form" onSubmit={handleLogin}>
-      <div>
-        username
-        <input
+    <Form data-testid="login-form" onSubmit={handleLogin}>
+      <Form.Group>
+        <Form.Label>username</Form.Label>
+        <Form.Control 
           data-testid="username"
           type="text"
           value={username}
           name="username"
           onChange={({ target }) => setUsername(target.value)}
         />
-      </div>
-      <div>
-        password
-        <input
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>password</Form.Label>
+        <Form.Control 
           data-testid="password"
           type="text"
           value={password}
           name="password"
           onChange={({ target }) => setPassword(target.value)}
         />
+      </Form.Group>
+      <div style={{paddingTop: 5}}>
+        <Button variant="primary" type="submit">
+          login
+        </Button>
       </div>
-      <button type="submit">log in</button>
-    </form>
+
+    </Form>
   );
 };
 

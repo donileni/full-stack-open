@@ -2,12 +2,15 @@ import { useUserValue } from "../UserContext";
 import blogService from "../services/blogs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../main";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CommentSection from "./CommentSection";
+import { Button } from "react-bootstrap";
+
 
 const Blog = () => {
   const user = useUserValue();
   const id = useParams().id;
+  const navigate = useNavigate()
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.updateBlog,
@@ -57,6 +60,7 @@ const Blog = () => {
     event.preventDefault();
     if (window.confirm(`remove blog ${blog.title} by ${blog.user.name}`)) {
       deleteBlogMutation.mutate(blog.id);
+      navigate("/")
     }
   };
 
@@ -67,12 +71,17 @@ const Blog = () => {
         <a href={blog.url}>{blog.url}</a>
       </div>
       <div>
-        {`${blog.likes} likes`} <button onClick={addLike}>like</button>{" "}
+        {`${blog.likes} likes `} 
+        <Button onClick={addLike}>
+          like
+        </Button>
       </div>
       <div>{`added by ${blog.user.name}`}</div>
       <div style={hideButton}>
         {" "}
-        <button onClick={removeBlog}>remove</button>
+        <Button onClick={removeBlog}>
+          remove
+        </Button>
       </div>
       <CommentSection blog={blog} />
     </div>
