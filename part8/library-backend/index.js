@@ -1,7 +1,6 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-const { v1: uuid } = require("uuid");
-
+const { GraphQLError } = require("graphql");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
@@ -169,23 +168,66 @@ const resolvers = {
 
       if (author) {
         const book = new Book({ ...args, author: author });
-        return book.save();
+        try {
+          await book.save();
+        } catch (error) {
+          throw new GraphQLError("Saving book failed", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.title,
+              error,
+            },
+          });
+        }
+        return book;
       } else {
-        const newAuthor = await new Author({ name: args.author }).save();
+        const newAuthor = new Author({ name: args.author });
+
+        try {
+          await newAuthor.save();
+        } catch (error) {
+          throw new GraphQLError("Saving author failed", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+              error,
+            },
+          });
+        }
+
         const book = new Book({ ...args, author: newAuthor });
 
-        return book.save();
+        try {
+          await book.save();
+        } catch (error) {
+          throw new GraphQLError("Saving book failed", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.title,
+              error,
+            },
+          });
+        }
+        return book;
       }
     },
     editAuthor: async (root, args) => {
       const authorToChange = await Author.findOne({ name: args.name });
 
-      if (!authorToChange) {
-        return null;
+      try {
+        authorToChange.born = args.setBornTo;
+        await authorToChange.save();
+      } catch (error) {
+        throw new GraphQLError("Can't find author to edit", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+            error,
+          },
+        });
       }
 
-      authorToChange.born = args.setBornTo;
-      return authorToChange.save();
+      return authorToChange;
     },
   },
 };
