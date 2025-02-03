@@ -1,19 +1,32 @@
-import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../queries"
+import { useQuery } from "@apollo/client";
+import { ALL_BOOKS } from "../queries";
+import { useState } from "react";
 
 const Books = (props) => {
+  const [filter, setFiter] = useState(null);
 
-  const result = useQuery(ALL_BOOKS)
+  const result = useQuery(ALL_BOOKS);
 
   if (result.loading) {
-    return <div>loading...</div>
+    return <div>loading...</div>;
   }
 
   if (!props.show) {
-    return null
+    return null;
   }
 
-  const books = result.data.allBooks
+  const books = result.data.allBooks;
+
+  const allGenres = books.map((book) => book.genres).flat();
+  const uniqueGenres = [...new Set(allGenres)];
+
+  let booksToShow = [];
+
+  if (!filter) {
+    booksToShow = books;
+  } else {
+    booksToShow = books.filter((book) => book.genres.includes(filter));
+  }
 
   return (
     <div>
@@ -26,7 +39,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((book) => (
+          {booksToShow.map((book) => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
@@ -35,8 +48,16 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      <div>
+        {uniqueGenres.map((genre) => (
+          <button onClick={() => setFiter(genre)} key={genre}>
+            {genre}
+          </button>
+        ))}
+        <button onClick={() => setFiter(null)}>all genres</button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;
