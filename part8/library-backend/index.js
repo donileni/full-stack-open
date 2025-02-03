@@ -169,7 +169,7 @@ const resolvers = {
         return Book.find({ genres: args.genre });
       } else if (args.author) {
         const author = await Author.findOne({ name: args.author });
-        const authorId = author.id.toString();
+        const authorId = author._id.toString();
         return Book.find({ author: authorId });
       }
     },
@@ -189,7 +189,7 @@ const resolvers = {
   },
   Book: {
     author: async (root) => {
-      const authorOfBook = await Author.findById(root.author.toString())
+      const authorOfBook = await Author.findById(root.author._id.toString())
       return authorOfBook
     }
   },
