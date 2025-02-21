@@ -83,7 +83,7 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <div>
           content
           <input {...content} />

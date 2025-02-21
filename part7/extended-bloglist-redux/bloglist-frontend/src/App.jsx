@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
 import Blogs from "./components/Blogs";
 import blogService from "./services/blogs";
 import loginServices from "./services/login";
@@ -17,7 +16,6 @@ const App = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
-  //const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
 
   useEffect(() => {

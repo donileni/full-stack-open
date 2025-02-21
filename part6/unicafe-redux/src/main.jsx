@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-
 import { legacy_createStore as createStore } from 'redux'
 import reducer from './reducer'
 
@@ -30,7 +29,8 @@ const App = () => {
       type: 'ZERO'
     })
   }
-
+  console.log('store: ', store.getState());
+  
   return (
     <div>
       <button onClick={good}>good</button> 
