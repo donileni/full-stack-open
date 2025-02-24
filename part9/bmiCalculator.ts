@@ -1,12 +1,30 @@
+import { isNumber } from "./utils";
 
 type BMI = "Underweight" | "Normal range" | "Overweight" | "Obese"
+
+interface InputValues {
+    value1: number;
+    value2: number;
+}
+
+const parseArguments = (args: string[]): InputValues => {
+    if (args.length < 4) throw new Error("not enough args");
+    if (args.length > 4) throw new Error("too many args");
+
+    if (isNumber(args[2]) && isNumber(args[3]) && Number(args[3]) !== 0) {
+        return {
+            value1: Number(args[2]),
+            value2: Number(args[3])
+        }
+    } else {
+        throw new Error("provided values were not valid numbers")
+    } 
+}
 
 const calculateBmi = (height: number, weight: number): BMI => {
 
     const value = parseFloat((weight / ((height / 100) ** 2)).toFixed(1))
-    console.log("value: ", value);
     
-
     if (value < 18.5) {
         return "Underweight"
     } else if (value >= 18.5 && value <= 24.9) {
@@ -18,5 +36,13 @@ const calculateBmi = (height: number, weight: number): BMI => {
     }
 } 
 
-
-console.log(calculateBmi(180, 95))
+try {
+    const { value1, value2 } = parseArguments(process.argv)
+    console.log(calculateBmi(value1, value2))
+} catch (error: unknown) {
+    let errorMessage = "something went wrong"
+    if (error instanceof Error) {
+        errorMessage += " Error: " + error.message
+    }
+    console.log(errorMessage)
+}
