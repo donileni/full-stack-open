@@ -10,10 +10,15 @@ interface Result {
     average: number
 }
 
-interface InputValues {
+export interface InputValues {
     target: number;
     numbers: number[];
-}
+};
+
+export type ExerciseRequest = {
+    dailyExercises: number[];
+    target: number;
+};
 
 const parseArguments = (args: string[]): InputValues => {
     if (args.length < 4) throw new Error("not enough args");
@@ -33,7 +38,7 @@ const parseArguments = (args: string[]): InputValues => {
     return { target, numbers };
 };
 
-const calculateExercises = (weeklyExercise: number[], target: number): Result => {
+export const calculateExercises = (weeklyExercise: number[], target: number): Result => {
     const periodLenght = weeklyExercise.length;
     const trainingDays = weeklyExercise.filter((number) => number !== 0).length;
     const trainingtime = weeklyExercise.reduce((sum, number) => sum + number, 0);
@@ -69,13 +74,15 @@ const calculateExercises = (weeklyExercise: number[], target: number): Result =>
     };
 };
 
-try {
-    const {target, numbers} = parseArguments(process.argv);
-    console.log(calculateExercises(numbers, target));
-} catch (error: unknown) {
-    let errorMessage = "something went wrong";
-    if (error instanceof Error) {
-        errorMessage += " Error: " + error.message;
+if (require.main === module) {
+    try {
+        const {target, numbers} = parseArguments(process.argv);
+        console.log(calculateExercises(numbers, target));
+    } catch (error: unknown) {
+        let errorMessage = "something went wrong";
+        if (error instanceof Error) {
+            errorMessage += " Error: " + error.message;
+        }
+        console.log(errorMessage);
     }
-    console.log(errorMessage);
 }
