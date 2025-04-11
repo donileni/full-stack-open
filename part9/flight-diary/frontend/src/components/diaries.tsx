@@ -1,5 +1,5 @@
-import { NonSensitiveDiaryEntry } from "../../../backend/src/types";
-import Diary from "./diary";
+import { NonSensitiveDiaryEntry } from "../types";
+import Diary from "./Diary";
 
 interface DiariesProps {
     diaries: NonSensitiveDiaryEntry[];
