@@ -5,6 +5,7 @@ import patientService from "../services/patients";
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Diagnosis, Patient } from '../types';
+import EntryView from './EntryView';
 
 interface PatientViewProps {
     diagnoses: Diagnosis[];
@@ -44,18 +45,31 @@ const PatientView = ({ diagnoses }: PatientViewProps) => {
 
             <h3>entries</h3>
             {patient.entries.map(entry => (
-                <div key={entry.date}>
-                    <div>{entry.date} <i>{entry.description}</i></div>
-                    <ul>
-                        {entry.diagnosisCodes?.map(code => {
-                            const diagnosis = diagnoses.find(d => d.code === code);
-                            return (
-                                <li key={code}>
-                                    {code} {diagnosis?.name}
-                                </li>
-                            );
-                        })}
-                    </ul>
+                <div 
+                    key={entry.date}
+                    style={{
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        padding: '10px',
+                        marginBottom: '10px',
+                    }}
+                >
+                    <EntryView entry={entry}/>
+                    {entry.diagnosisCodes && (
+                        <>
+                            <div>Diagnoses:</div>
+                            <ul>
+                                {entry.diagnosisCodes?.map(code => {
+                                const diagnosis = diagnoses.find(d => d.code === code);
+                                    return (
+                                        <li key={code}>
+                                            {code} {diagnosis?.name}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </>
+                    )}
                 </div>
             ))}
         </div>
