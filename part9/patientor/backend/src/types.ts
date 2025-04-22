@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NewPatientSchema } from "./utils";
+import { NewPatientSchema,  } from "./utils";
 
 export enum Gender {
     Male = "male",
@@ -73,3 +73,4 @@ export type NewPatient = z.infer<typeof NewPatientSchema>;
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 
 export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type NewEntry = z.infer<typeof NewPatientSchema>;

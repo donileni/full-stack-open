@@ -16,7 +16,7 @@ const OccupationalHealthcareEntryView = ({entry}: HospitalEntryProps) => {
                     <div>sick leave: </div>
                     <ul>
                         <li>from: {entry.sickLeave?.startDate}</li>
-                        <li>from: {entry.sickLeave?.endDate}</li>
+                        <li>to: {entry.sickLeave?.endDate}</li>
                     </ul>
                 
                 </>

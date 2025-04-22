@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction} from "express"; 
 import patientService from "../services/patientService";
-import { NewPatientSchema } from "../utils";
+import { NewPatientSchema, toNewEntry } from "../utils";
 import { NewPatient, Patient } from "../types";
 import { z } from "zod";
 
@@ -34,6 +34,20 @@ router.get("/:id", (req, res) => {
 router.post("/", newPatientParser, (req: Request<unknown, unknown, NewPatient>, res: Response<Patient>) => {
     const addedPatient = patientService.addPatient(req.body);
     res.json(addedPatient);
+});
+
+router.post("/:id", (req, res) => {
+    try {
+        const newEntry = toNewEntry(req.body);
+        const addedEntry = patientService.addEntry(req.params.id, newEntry);
+        res.json(addedEntry);
+    } catch (error: unknown) {
+        if (error instanceof z.ZodError) {
+            res.status(400).send({ error: error.issues });
+        } else {
+            res.status(400).send({ error: 'unknown error' });
+        }
+    }
 });
 
 router.use(errorMiddleware);

@@ -16,8 +16,6 @@ const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
-  console.log("diagnoses: ", diagnoses);
-
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
 
