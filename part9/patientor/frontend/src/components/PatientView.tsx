@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Diagnosis, Patient } from '../types';
 import EntryView from './EntryView';
+import EntryForm from './EntryView/EntryForm';
 
 interface PatientViewProps {
     diagnoses: Diagnosis[];
@@ -37,16 +38,19 @@ const PatientView = ({ diagnoses }: PatientViewProps) => {
     if (patient.gender === "female") GenderIcon = FemaleIcon;
     else if (patient.gender === "other") GenderIcon = QuestionMarkIcon;
 
+
     return(
         <div>
             <h2>{patient.name} <GenderIcon /></h2> 
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
 
+            <EntryForm setPatient={setPatient} patient={patient} diagnoses={diagnoses}/>
+
             <h3>entries</h3>
             {patient.entries.map(entry => (
                 <div 
-                    key={entry.date}
+                    key={entry.id}
                     style={{
                         border: '1px solid #ccc',
                         borderRadius: '4px',
@@ -59,10 +63,10 @@ const PatientView = ({ diagnoses }: PatientViewProps) => {
                         <>
                             <div>Diagnoses:</div>
                             <ul>
-                                {entry.diagnosisCodes?.map(code => {
+                                {entry.diagnosisCodes?.map((code, index) => {
                                 const diagnosis = diagnoses.find(d => d.code === code);
                                     return (
-                                        <li key={code}>
+                                        <li key={`${code}-${index}`}>
                                             {code} {diagnosis?.name}
                                         </li>
                                     );

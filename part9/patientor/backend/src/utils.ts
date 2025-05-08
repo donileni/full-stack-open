@@ -65,7 +65,11 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
             description: z.string().parse(object.description),
             date: z.string().date().parse(object.date),
             specialist: z.string().parse(object.specialist),
-            diagnosisCodes: "diagnosisCodes" in object ? parseDiagnosisCodes(object.diagnosisCodes) : undefined
+            diagnosisCodes: 
+                "diagnosisCodes" in object && 
+                Array.isArray(object.diagnosisCodes) &&
+                !(object.diagnosisCodes.length === 0)
+                ? parseDiagnosisCodes(object) : undefined
         };
 
         switch (object.type) {
@@ -94,9 +98,15 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
                         ...newEntry,
                         type: "OccupationalHealthcare",
                         employerName: z.string().parse(object.employerName),
-                        sickLeave: parseSickLeave(object.sickLeave)
+                        sickLeave: object.sickLeave ? parseSickLeave(object.sickLeave) : undefined
                     };
-                }
+                } else if ("employerName" in object) {
+                    return {
+                        ...newEntry,
+                        type: "OccupationalHealthcare",
+                        employerName: z.string().parse(object.employerName),
+                    };
+                };
                 throw new Error("Incorrect data: employer name or sick leave missing");
         
             default:

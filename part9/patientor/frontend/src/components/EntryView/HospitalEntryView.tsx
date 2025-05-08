@@ -11,7 +11,7 @@ const HospitalEntryView = ({entry}: HospitalEntryProps) => {
             <div>{entry.date} <LocalHospitalIcon /></div>
             <div>diagnosed by {entry.specialist}</div>
             <div><i>{entry.description}</i></div>
-            <div>dischanrged {entry.discharge.date}: {entry.discharge.criteria}</div>
+            <div>discharged {entry.discharge.date}: {entry.discharge.criteria}</div>
         </div>
     );
 };
