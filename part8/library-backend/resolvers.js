@@ -67,6 +67,7 @@ const resolvers = {
             },
           });
         }
+        pubsub.publish("BOOK_ADDED", { bookAdded: book });
         return book;
       } else {
         const newAuthor = new Author({ name: args.author });
@@ -165,7 +166,7 @@ const resolvers = {
   },
   Subscription: {
     bookAdded: {
-      subscribe: () => pubsub.asyncIterableIterator("BOOK_ADDED"),
+      subscribe: () => pubsub.asyncIterator("BOOK_ADDED"),
     },
   },
 };

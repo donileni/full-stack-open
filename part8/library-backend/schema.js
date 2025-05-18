@@ -56,6 +56,6 @@ const typeDefs = `
   type Subscription {
     bookAdded: Book!
   }
-`;
+`
 
 module.exports = typeDefs
