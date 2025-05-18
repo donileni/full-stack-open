@@ -1,11 +1,12 @@
 import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
+import { ALL_BOOKS, FILTERED_BOOKS } from "../queries";
 import { useState } from "react";
 
 const Books = (props) => {
   const [filter, setFiter] = useState(null);
 
   const result = useQuery(ALL_BOOKS);
+  const filteredBooks = useQuery(FILTERED_BOOKS, {variables: { genre: filter}})
 
   if (result.loading) {
     return <div>loading...</div>;
@@ -24,10 +25,11 @@ const Books = (props) => {
 
   if (!filter) {
     booksToShow = books;
+  } else if (filteredBooks.loading) {
+    return <div>loading filtered books...</div>;
   } else {
-    booksToShow = books.filter((book) => book.genres.includes(filter));
+    booksToShow = filteredBooks.data.allBooks
   }
-
   return (
     <div>
       <h2>books</h2>
